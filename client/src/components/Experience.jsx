@@ -7,10 +7,11 @@ import { AnimatedWoman } from "./AnimatedWoman";
 import { charactersAtom, socket } from "./SocketManager";
 import { Item } from "./Item";
 
-const MOVE_SPEED = 0.04;
+const MOVE_SPEED = 5;       // units per second (delta-time based)
 const CAM_DISTANCE = 8;
 const CAM_HEIGHT = 4;
-const CAM_LERP = 0.01;
+const CAM_LERP = 0.1;       // much smoother camera follow
+const EMIT_INTERVAL = 50;   // ms between socket emits (~20 updates/sec)
 
 // ─── Keyboard hook ────────────────────────────────────────────
 function useKeys() {
@@ -35,8 +36,16 @@ function ThirdPersonController({ characters }) {
 
   const yaw   = useRef(Math.PI);  // horizontal camera angle
   const pitch = useRef(0.4);      // vertical camera angle (radians)
-  const charPos = useRef(new THREE.Vector3());
+  const charPos = useRef(new THREE.Vector3(0, 0, 0));
   const isLocked = useRef(false);
+  const lastEmitTime = useRef(0);
+
+  // Pre-allocated vectors to avoid per-frame garbage collection
+  const _forward = useRef(new THREE.Vector3());
+  const _right   = useRef(new THREE.Vector3());
+  const _move    = useRef(new THREE.Vector3());
+  const _camTarget = useRef(new THREE.Vector3());
+  const _lookAt  = useRef(new THREE.Vector3());
 
   // Pointer lock — click canvas to capture mouse
   useEffect(() => {
@@ -64,17 +73,20 @@ function ThirdPersonController({ characters }) {
     };
   }, [gl]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
+    // Cap delta to avoid huge jumps on tab-switch or lag spikes
+    const dt = Math.min(delta, 0.1);
+
     // Sync local position from server on first load
     const me = characters.find((c) => c.id === socket.id);
     if (me && charPos.current.lengthSq() === 0) {
       charPos.current.set(...me.position);
     }
 
-    // Direction vectors derived from camera yaw
-    const forward = new THREE.Vector3(-Math.sin(yaw.current), 0, -Math.cos(yaw.current));
-    const right   = new THREE.Vector3( Math.cos(yaw.current), 0, -Math.sin(yaw.current));
-    const move    = new THREE.Vector3();
+    // Direction vectors derived from camera yaw (reuse pre-allocated vectors)
+    const forward = _forward.current.set(-Math.sin(yaw.current), 0, -Math.cos(yaw.current));
+    const right   = _right.current.set( Math.cos(yaw.current), 0, -Math.sin(yaw.current));
+    const move    = _move.current.set(0, 0, 0);
 
     if (keys.current["KeyW"] || keys.current["ArrowUp"])    move.add(forward);
     if (keys.current["KeyS"] || keys.current["ArrowDown"])  move.sub(forward);
@@ -82,25 +94,32 @@ function ThirdPersonController({ characters }) {
     if (keys.current["KeyD"] || keys.current["ArrowRight"]) move.add(right);
 
     if (move.lengthSq() > 0) {
-      move.normalize().multiplyScalar(MOVE_SPEED);
+      move.normalize().multiplyScalar(MOVE_SPEED * dt);
       charPos.current.add(move);
       // Clamp to floor bounds
       charPos.current.x = Math.max(-24, Math.min(24, charPos.current.x));
       charPos.current.z = Math.max(-24, Math.min(24, charPos.current.z));
-      socket.emit("move", [charPos.current.x, 0, charPos.current.z]);
+
+      // Throttle socket emissions to avoid flooding the server
+      const now = performance.now();
+      if (now - lastEmitTime.current >= EMIT_INTERVAL) {
+        lastEmitTime.current = now;
+        socket.emit("move", [charPos.current.x, 0, charPos.current.z]);
+      }
     }
 
-    // Camera: spherical orbit around character
+    // Camera: spherical orbit around character (reuse vectors)
     const cosP = Math.cos(pitch.current);
     const sinP = Math.sin(pitch.current);
-    const target = new THREE.Vector3(
+    _camTarget.current.set(
       charPos.current.x +  Math.sin(yaw.current) * CAM_DISTANCE * cosP,
       charPos.current.y +  sinP * CAM_DISTANCE + CAM_HEIGHT * 0.3,
       charPos.current.z +  Math.cos(yaw.current) * CAM_DISTANCE * cosP
     );
 
-    camera.position.lerp(target, CAM_LERP);
-    camera.lookAt(charPos.current.clone().add(new THREE.Vector3(0, 1.5, 0)));
+    camera.position.lerp(_camTarget.current, CAM_LERP);
+    _lookAt.current.set(charPos.current.x, charPos.current.y + 1.5, charPos.current.z);
+    camera.lookAt(_lookAt.current);
   });
 
   return null;

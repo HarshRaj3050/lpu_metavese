@@ -1,18 +1,15 @@
 import { useAtom } from "jotai";
 import { useState, useEffect, useRef } from "react";
-import { messagesAtom, socket } from "./SocketManager";
+import { messagesAtom, currentUserAtom, inMetaverseAtom, socket } from "./SocketManager";
 import "../styles/ChatBox.css";
 
 export const ChatBox = () => {
   const [messages] = useAtom(messagesAtom);
+  const [currentUsername] = useAtom(currentUserAtom);
+  const [inMetaverse] = useAtom(inMetaverseAtom);
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(true);
-  const [userId, setUserId] = useState(null);
   const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    setUserId(socket.id);
-  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -20,7 +17,7 @@ export const ChatBox = () => {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (inputValue.trim()) {
+    if (inputValue.trim() && inMetaverse) {
       socket.emit("message", inputValue);
       setInputValue("");
     }
@@ -28,13 +25,18 @@ export const ChatBox = () => {
 
   const getMessageClass = (senderName) => {
     // Messages from the current user are marked as "own"
-    return senderName && senderName.includes(socket.id.slice(0, 5)) ? "own" : "other";
+    return senderName === currentUsername ? "own" : "other";
   };
+
+  // Don't show chat if not in metaverse
+  if (!inMetaverse) {
+    return null;
+  }
 
   return (
     <div className={`chatbox-container ${isOpen ? "open" : "closed"}`}>
       <div className="chatbox-header">
-        <h3>Chat</h3>
+        <h3>Chat {currentUsername && `(${currentUsername})`}</h3>
         <button
           className="toggle-btn"
           onClick={() => setIsOpen(!isOpen)}

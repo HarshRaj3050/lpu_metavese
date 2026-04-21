@@ -8,7 +8,7 @@ import { useFrame, useGraph } from "@react-three/fiber";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { SkeletonUtils } from "three-stdlib";
 
-const MOVEMENT_SPEED = 0.032;
+const MOVEMENT_SPEED = 4; // units per second (delta-time based)
 
 export function AnimatedWoman({
   hairColor = "green",
@@ -35,18 +35,26 @@ export function AnimatedWoman({
     return () => actions[animation]?.fadeOut(0.32);
   }, [animation]);
 
-  useFrame(() => {
-    if (group.current.position.distanceTo(props.position) > 0.1) {
-      const direction = group.current.position
-        .clone()
-        .sub(props.position)
-        .normalize()
-        .multiplyScalar(MOVEMENT_SPEED);
-      group.current.position.sub(direction);
+  // Track previous animation to avoid unnecessary React re-renders
+  const prevAnim = useRef(animation);
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.1);
+    const dist = group.current.position.distanceTo(props.position);
+
+    if (dist > 0.1) {
+      // Lerp toward target for smooth interpolation
+      group.current.position.lerp(props.position, Math.min(1, MOVEMENT_SPEED * dt));
       group.current.lookAt(props.position);
-      setAnimation("CharacterArmature|Run");
+      if (prevAnim.current !== "CharacterArmature|Run") {
+        prevAnim.current = "CharacterArmature|Run";
+        setAnimation("CharacterArmature|Run");
+      }
     } else {
-      setAnimation("CharacterArmature|Idle");
+      if (prevAnim.current !== "CharacterArmature|Idle") {
+        prevAnim.current = "CharacterArmature|Idle";
+        setAnimation("CharacterArmature|Idle");
+      }
     }
   });
 
