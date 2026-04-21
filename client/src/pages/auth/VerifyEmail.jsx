@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.BASE_URL || 'https://lpu-metavese.onrender.com';
 import Silk from '../../components/animation/Silk'
 
 const OTP_LENGTH = 6;
@@ -147,29 +147,29 @@ const VerifyEmail = () => {
                             noiseIntensity={0}
                             rotation={0}
                         ></Silk>
-                            {/* Blobs */}
-                            <div className="absolute -top-10 -right-10 w-56 h-56 rounded-full opacity-40 blur-3xl"
-                                style={{ background: 'rgba(100,120,255,0.5)' }} />
-                            <div className="absolute bottom-16 -left-8 w-44 h-44 rounded-full blur-3xl"
-                                style={{ background: 'rgba(30,200,230,0.3)' }} />
+                        {/* Blobs */}
+                        <div className="absolute -top-10 -right-10 w-56 h-56 rounded-full opacity-40 blur-3xl"
+                            style={{ background: 'rgba(100,120,255,0.5)' }} />
+                        <div className="absolute bottom-16 -left-8 w-44 h-44 rounded-full blur-3xl"
+                            style={{ background: 'rgba(30,200,230,0.3)' }} />
 
-                            {/* Top Text */}
-                            <div className="absolute left-10 top-10 z-10 ">
-                                <p className="text-white/70 text-sm mb-2">Push your limits, unlock your potential.</p>
-                                <h2 className="text-white text-2xl font-bold leading-snug">
-                                    Push harder today,  <br />become stronger than yesterday.
-                                </h2>
-                            </div>
+                        {/* Top Text */}
+                        <div className="absolute left-10 top-10 z-10 ">
+                            <p className="text-white/70 text-sm mb-2">Push your limits, unlock your potential.</p>
+                            <h2 className="text-white text-2xl font-bold leading-snug">
+                                Push harder today,  <br />become stronger than yesterday.
+                            </h2>
+                        </div>
 
-                            {/* Partners */}
-                            <div className="absolute bottom-10 left-10 z-10">
-                                <p className="text-white/50 text-xs mb-3">Our partners</p>
-                                <div className="flex flex-wrap gap-4 items-center">
-                                    {['Discord', 'Instagram', 'Spotify', 'YouTube', 'TikTok'].map((name) => (
-                                        <span key={name} className="text-white/80 text-xs font-semibold">{name}</span>
-                                    ))}
-                                </div>
+                        {/* Partners */}
+                        <div className="absolute bottom-10 left-10 z-10">
+                            <p className="text-white/50 text-xs mb-3">Our partners</p>
+                            <div className="flex flex-wrap gap-4 items-center">
+                                {['Discord', 'Instagram', 'Spotify', 'YouTube', 'TikTok'].map((name) => (
+                                    <span key={name} className="text-white/80 text-xs font-semibold">{name}</span>
+                                ))}
                             </div>
+                        </div>
                     </div>
 
                     {/* Right Panel - OTP */}
@@ -248,11 +248,10 @@ const VerifyEmail = () => {
                             <button
                                 onClick={handleResend}
                                 disabled={timeLeft > 0 || isResending}
-                                className={`text-xs font-semibold transition-colors ${
-                                    timeLeft > 0 || isResending
+                                className={`text-xs font-semibold transition-colors ${timeLeft > 0 || isResending
                                         ? 'text-gray-300 cursor-not-allowed'
                                         : 'text-indigo-600 hover:underline cursor-pointer'
-                                }`}
+                                    }`}
                             >
                                 {isResending ? 'Sending...' : 'Resend code'}
                             </button>
