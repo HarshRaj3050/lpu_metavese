@@ -19,15 +19,11 @@ const HeroAbout = () => {
             className="text-4xl md:text-5xl font-black text-white uppercase mb-6 leading-tight"
             style={{ fontFamily: "'Orbitron', sans-serif", letterSpacing: "0.05em" }}
           >
-            The Magiccraft
+            LPU MetaVerse
           </h1>
 
           <p className="text-gray-300 text-sm uppercase leading-relaxed tracking-wide mb-8 font-medium">
-            Magiccraft is a PVP war game. Level up with your friends, fight each
-            other, earn real money through $MCRT cryptocurrency in the game.
-            When you die you can drop real money and items which makes the
-            stakes more intense. The first real PVP castle siege play-to-earn
-            game.
+           A metaverse-based virtual hangout platform where students can connect, interact, and find like-minded peers within a large campus. It creates immersive social spaces, enabling meaningful conversations, collaboration, and community building, making it easier to discover friendships and networks in a university with thousands of students.
           </p>
 
           {/* Primary Buttons */}
@@ -38,13 +34,13 @@ const HeroAbout = () => {
             </button>
             <button className="px-6 py-2.5 border border-blue-400 text-blue-300 text-xs font-bold uppercase tracking-widest hover:bg-blue-500/20 transition-all duration-200"
               style={{ clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)" }}>
-              Marketplace
+              Live Deployment
             </button>
           </div>
 
           {/* Secondary Buttons */}
           <div className="flex gap-3 flex-wrap">
-            {["Buy $MCRT", "Whitepaper", "Become a Partner", "Mint NFT"].map((label) => (
+            {["Connect", "collaboration", "community ", "friendships"].map((label) => (
               <button
                 key={label}
                 className="px-4 py-2 border border-blue-500/50 text-blue-300 text-xs font-semibold uppercase tracking-wider hover:border-blue-400 hover:text-white transition-all duration-200"

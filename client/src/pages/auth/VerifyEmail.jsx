@@ -155,17 +155,17 @@ const VerifyEmail = () => {
 
                         {/* Top Text */}
                         <div className="absolute left-10 top-10 z-10 ">
-                            <p className="text-white/70 text-sm mb-2">Push your limits, unlock your potential.</p>
+                            <p className="text-white/70 text-sm mb-2">Connect beyond classrooms.</p>
                             <h2 className="text-white text-2xl font-bold leading-snug">
-                                Push harder today,  <br />become stronger than yesterday.
+                               Join a virtual world designed <br/> for student connection and growth
                             </h2>
                         </div>
 
                         {/* Partners */}
                         <div className="absolute bottom-10 left-10 z-10">
-                            <p className="text-white/50 text-xs mb-3">Our partners</p>
+                            <p className="text-white/50 text-xs mb-2">Our partners</p>
                             <div className="flex flex-wrap gap-4 items-center">
-                                {['Discord', 'Instagram', 'Spotify', 'YouTube', 'TikTok'].map((name) => (
+                                {["Lovely Professional University"].map((name) => (
                                     <span key={name} className="text-white/80 text-xs font-semibold">{name}</span>
                                 ))}
                             </div>
