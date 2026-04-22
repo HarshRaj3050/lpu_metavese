@@ -86,7 +86,7 @@ export const OnlinePlayersList = () => {
               </span>
 
               <span
-                className="text-[11px] font-bold text-white px-[10px] py-[3px] rounded-full min-w-[24px] text-center"
+                className="text-[11px] font-bold text-white px-[10px] py-[1px] rounded-full min-w-[24px] text-center"
                 style={{
                   background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
                   boxShadow: "0 2px 8px rgba(99,102,241,0.4)",

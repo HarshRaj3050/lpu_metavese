@@ -12,12 +12,21 @@ export const ChatBox = () => {
   const [currentUsername] = useAtom(currentUserAtom);
   const [inMetaverse] = useAtom(inMetaverseAtom);
   const [inputValue, setInputValue] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Auto-open chat when a new message arrives from someone else
+  useEffect(() => {
+    if (messages.length === 0) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg.senderName !== currentUsername) {
+      setIsOpen(true);
+    }
+  }, [messages.length]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -78,10 +87,9 @@ export const ChatBox = () => {
                   <div
                     key={index}
                     className={`px-3 py-2 rounded-lg max-w-[85%] break-words flex flex-col gap-0.5
-                      ${
-                        isOwn
-                          ? "self-end bg-[rgb(102,102,255)] text-white"
-                          : "self-start bg-white border border-[#ddd] text-[#333]"
+                      ${isOwn
+                        ? "self-end bg-[rgb(102,102,255)] text-white"
+                        : "self-start bg-white border border-[#ddd] text-[#333]"
                       }`}
                   >
                     <span className="text-[12px] font-semibold opacity-80">

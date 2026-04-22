@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/auth.route');
+const agoraRoutes = require('./routes/agora.route');
 
 const cors = require("cors");
 const app = express();
@@ -35,6 +36,7 @@ app.use(cors({
 
 
 app.use("/api/auth", authRoutes);
+app.use("/api/agora", agoraRoutes);
 
 app.get("/", (req, res) => {
     res.send("Server working");
