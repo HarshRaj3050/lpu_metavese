@@ -1,6 +1,8 @@
-# R3F Sims Online - 3D Metaverse Platform
+# LPU - 3D Metaverse Platform
 
 A real-time, multiplayer 3D metaverse application built with React Three Fiber, Express, and Socket.io. Users can create accounts, authenticate via email, and interact with other players in a 3D virtual environment with voice/video communication.
+
+Video explain - https://www.linkedin.com/in/harshraj3050/
 
 ![Project Status](https://img.shields.io/badge/status-active-brightgreen)
 ![Node Version](https://img.shields.io/badge/node-16%2B-blue)
